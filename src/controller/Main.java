@@ -1,11 +1,10 @@
 package controller;
 
+import java.util.ArrayList;
 import model.world.World;
 import model.world.generator.Obstacle;
 import model.world.type.BlockType;
 import model.world.type.ObstacleSpread;
-
-import java.util.ArrayList;
 
 /**
  * Created by Project on 5/14/2015.
@@ -15,7 +14,7 @@ public class Main
     public static void main(String[] args)
     {
         Obstacle a = new Obstacle();
-        a.generateWorld(5, 5, ObstacleSpread.TOTAL, 20);
+        a.generateWorld(10, 20, ObstacleSpread.PERCENTAGE, 50);
         printWorld(a);
 
     }
@@ -32,7 +31,7 @@ public class Main
                 {
                     case PLAIN:
                     {
-                        tile = 'O';
+                        tile = ' ';
                         break;
                     }
                     case WALL:

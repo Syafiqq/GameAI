@@ -25,7 +25,7 @@ public class Maze
         this.x = x / 2 + 1;
         this.y = y / 2 + 1;
         maze = new int[this.x][this.y];
-        maze1 = new boolean[this.y * 2 + 1][this.y * 2 + 1];
+        maze1 = new boolean[this.y * 2 + 1][this.x * 2 + 1];
         generateMazes(0, 0);
     }
 
@@ -44,8 +44,8 @@ public class Maze
 
     public static void main(String[] args)
     {
-        Maze a = new Maze(7, 7);
-        a.display1();
+        Maze a = new Maze(10, 10);
+        a.display();
         boolean[][] tmp = a.getmaze();
         for (boolean[] tmp11 : tmp)
         {
@@ -55,44 +55,68 @@ public class Maze
             }
             System.out.printf("\n");
         }
+        System.out.println(Maze.string);
     }
 
     private void display()
     {
         for (int i = 0; i < y; i++)
         {
+            //System.out.println(i);
             // draw the north edge
             for (int j = 0; j < x; j++)
             {
-                string += ((maze[j][i] & 1) == 0 ? "+---" : "+   ");
-            }
-            string += ("+") + "\n";
-            // draw the west edge
-            for (int j = 0; j < x; j++)
-            {
-                if (i == 0 && j == 0)
+                //string += ((maze[j][i] & 1) == 0 ? "+---" : "+   ");
+                if ((maze[j][i] & 1) == 0)
                 {
-                    string += "| O ";
+                    maze1[i * 2 + 0][j * 2 + 0] = false;
+                    maze1[i * 2 + 0][j * 2 + 1] = false;
                 }
                 else
                 {
-                    string += ((maze[j][i] & 8) == 0 ? "|   " : "    ");
+                    maze1[i * 2 + 0][j * 2 + 0] = false;
+                    maze1[i * 2 + 0][j * 2 + 1] = true;
                 }
             }
-            string += ("|") + "\n";
+            //string += ("+") + "\n";
+            maze1[i * 2 + 0][x * 2 + 0] = false;
+            // draw the west edge
+            for (int j = 0; j < x; j++)
+            {
+                //string += ((maze[j][i] & 8) == 0 ? "|   " : "    ");
+                if ((maze[j][i] & 8) == 0)
+                {
+                    maze1[i * 2 + 1][j * 2 + 0] = false;
+                    maze1[i * 2 + 1][j * 2 + 1] = true;
+                }
+                else
+                {
+                    maze1[i * 2 + 1][j * 2 + 0] = true;
+                    maze1[i * 2 + 1][j * 2 + 1] = true;
+                }
+            }
+            //string += ("|") + "\n";
+            maze1[i * 2 + 1][x * 2 + 0] = false;
+            //System.out.printf("%s", string);
+            //System.exit(0);
+
         }
         // draw the bottom line
         for (int j = 0; j < x; j++)
         {
-            string += ("+---");
+            //string += ("+---");
+            maze1[y * 2 + 0][j * 2 + 0] = false;
+            maze1[y * 2 + 0][j * 2 + 1] = false;
         }
-        string += ("+");
+        maze1[y * 2 + 0][x * 2 + 0] = false;
+        //string += ("+");
+
     }
 
     private void display1()
     {
         //System.out.println(this.maze1.length + " " + this.maze1[0].length);
-        for (int i = 0; i < y; i++)
+        for (int i = 0; i < maze1[0].length; i++)
         {
             // draw the north edge
             for (int j = 0; j < x; j++)
@@ -151,7 +175,7 @@ public class Maze
         {
             int nx = cx + dir.dx;
             int ny = cy + dir.dy;
-            if (between(nx, x) && between(ny, y)
+            if (between(nx, maze.length) && between(ny, maze[0].length)
                     && (maze[nx][ny] == 0))
             {
                 maze[cx][cy] |= dir.bit;
