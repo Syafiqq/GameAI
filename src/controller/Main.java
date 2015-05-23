@@ -1,63 +1,65 @@
 package controller;
 
-import java.util.ArrayList;
-import model.world.World;
-import model.world.generator.Obstacle;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import model.world.type.BlockType;
-import model.world.type.ObstacleSpread;
+import view.GameBoard;
+import view.GameFrame;
+import view.Tile;
 
 /**
  * Created by Project on 5/14/2015.
  */
 public class Main
 {
+    public static GameFrame frame;
+    public static GameBoard board;
     public static void main(String[] args)
     {
-        Obstacle a = new Obstacle();
-        a.generateWorld(10, 20, ObstacleSpread.PERCENTAGE, 50);
-        printWorld(a);
+        SwingUtilities.invokeLater
+                (() -> {
+                {
+                    try
+                    {
+                        // Set cross-platform Java L&F (also called "Metal")
+                        UIManager.setLookAndFeel("com.bulenkov.darcula.DarculaLaf");
+                    } catch (UnsupportedLookAndFeelException e)
+                    {
+                        // handle exception
+                    } catch (ClassNotFoundException e)
+                    {
+                        // handle exception
+                    } catch (InstantiationException e)
+                    {
+                        // handle exception
+                    } catch (IllegalAccessException e)
+                    {
+                        // handle exception
+                    }
+                    frame = new view.GameFrame();
+                    Main.frame.setVisible(Boolean.TRUE);
 
+                    board = new GameBoard(35);
+                    initGame(board);
+
+                    frame.getContentPane().add(board, BorderLayout.CENTER);
+                    frame.pack();
+
+
+                }
+            }
+                );
     }
 
-    public static void printWorld(World world)
+    public static void initGame(GameBoard board)
     {
-        ArrayList<ArrayList<BlockType>> dimension = world.getWorld();
-        for (ArrayList<BlockType> row : dimension)
-        {
-            for (BlockType column : row)
-            {
-                char tile;
-                switch (column)
-                {
-                    case PLAIN:
-                    {
-                        tile = ' ';
-                        break;
-                    }
-                    case WALL:
-                    {
-                        tile = 'X';
-                        break;
-                    }
-                    case START:
-                    {
-                        tile = 'S';
-                        break;
-                    }
-                    case FINISH:
-                    {
-                        tile = 'F';
-                        break;
-                    }
-                    default:
-                    {
-                        tile = '-';
-                        break;
-                    }
-                }
-                System.out.printf("%c", tile);
-            }
-            System.out.printf("\n");
-        }
+        board.setPreferredSize(new Dimension(350, 350));
+        board.setBackground(Color.BLUE);
+        Tile tile1 = new Tile(BlockType.PLAIN, board);
+        board.add(tile1, 0);
     }
 }
