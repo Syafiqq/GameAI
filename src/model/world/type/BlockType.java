@@ -7,6 +7,4 @@ public enum BlockType
 {
     PLAIN,
     WALL,
-    START,
-    FINISH
 }
