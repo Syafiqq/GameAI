@@ -16,14 +16,14 @@ import view.Tile;
 /**
  * Created by Project on 5/14/2015.
  */
+
 public class Main
 {
     public static GameState state;
     public static GameFrame frame;
     public static GameBoard board;
     public static ArrayList<Tile> tileset;
-    public static int width;
-    public static int height;
+    public static model.gameHelper.Dimension dimension;
     public static char pionCounter = 3;
     public static int rootID = -1;
 
@@ -50,8 +50,13 @@ public class Main
                     {
                         // handle exception
                     }
+
+                    Main.dimension  = new model.gameHelper.Dimension();
+
                     frame = new view.GameFrame();
                     Main.frame.setVisible(Boolean.TRUE);
+
+
 
                     board = new GameBoard(25);
                     initGame(board);
@@ -81,13 +86,13 @@ public class Main
         maze.generateWorld(5, 5);
         ArrayList<ArrayList<BlockType>> tmp = maze.getWorld();
 
-        Main.width = tmp.get(0).size();
-        Main.height = tmp.size();
+        Main.dimension.setX(tmp.get(0).size());
+        Main.dimension.setY(tmp.size());
 
-        board.setPreferredSize(new Dimension(Main.width * board.getTileSize(), Main.height * board.getTileSize()));
+        board.setPreferredSize(new Dimension(Main.dimension.getX() * board.getTileSize(), Main.dimension.getY() * board.getTileSize()));
 
 
-        Main.tileset = new ArrayList<>(Main.width * Main.height);
+        Main.tileset = new ArrayList<>(Main.dimension.getX() * Main.dimension.getY());
 
         for (int i = 0; i < tmp.size(); ++i)
         {
