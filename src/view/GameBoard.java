@@ -4,8 +4,10 @@
 
 package view;
 
+import controller.Main;
 import java.awt.Dimension;
 import javax.swing.JPanel;
+import model.gameHelper.GameState;
 
 /**
  * @author Muhammad Syafiq Syafiq
@@ -16,12 +18,14 @@ public class GameBoard extends JPanel
 
     public GameBoard()
     {
+        Main.state = GameState.PLACEPION;
         this.tileSize = 25;
         initComponents();
     }
 
     public GameBoard(int tileSize)
     {
+        Main.state = GameState.PLACEPION;
         this.tileSize = tileSize;
         initComponents();
     }
