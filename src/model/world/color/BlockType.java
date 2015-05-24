@@ -19,14 +19,6 @@ public class BlockType
             {
                 return Color.BLACK;
             }
-            case START:
-            {
-                return Color.RED;
-            }
-            case FINISH:
-            {
-                return Color.BLUE;
-            }
             default:
             {
                 return Color.WHITE;
