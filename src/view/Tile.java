@@ -8,6 +8,7 @@ import controller.Main;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.JPanel;
 import model.world.type.BlockPion;
 import model.world.type.BlockType;
@@ -75,7 +76,9 @@ public class Tile extends JPanel
 
     private void thisMouseClicked(MouseEvent e)
     {
-        switch (Main.state)
+        System.out.println(whoIsLeft(Main.dimension, this.id));
+        System.out.println(whoIsRight(Main.dimension, this.id));
+/*        switch (Main.state)
         {
             case PLACEPION:
             {
@@ -124,6 +127,30 @@ public class Tile extends JPanel
             {
                 break;
             }
+        }*/
+    }
+
+    public static int whoIsLeft(model.gameHelper.Dimension dimension, int nodeID)
+    {
+        if(nodeID % dimension.getX() == 0)
+        {
+            return -1;
+        }
+        else
+        {
+            return nodeID - 1;
+        }
+    }
+
+    public static int whoIsRight(model.gameHelper.Dimension dimension, int nodeID)
+    {
+        if((nodeID + 1) % dimension.getX() == 0 )
+        {
+            return -1;
+        }
+        else
+        {
+            return nodeID + 1;
         }
     }
 
