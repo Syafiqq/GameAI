@@ -8,12 +8,22 @@ new FormModel {
 			"vgap": 10
 		} ) {
 			name: "this"
-			"defaultCloseOperation": 3
-			"resizable": false
-			"minimumSize": new java.awt.Dimension( 800, 600 )
-			"$locationPolicy": 0
+			"minimumSize": new java.awt.Dimension( 600, 600 )
+			auxiliary() {
+				"JavaCodeGenerator.variableModifiers": 1
+			}
 			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
-				name: "scrollGame"
+				name: "scrollPane1"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+				add( new FormComponent( "javax.swing.JTextArea" ) {
+					name: "textArea1"
+					"font": new java.awt.Font( "Inconsolata", 0, 12 )
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				} )
 			}, new FormLayoutConstraints( class java.lang.String ) {
 				"value": "Center"
 			} )

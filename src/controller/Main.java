@@ -3,12 +3,17 @@ package controller;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import model.gameHelper.GameState;
 import model.world.generator.Maze;
+import model.world.generator.Obstacle;
 import model.world.type.BlockType;
+import model.world.type.ObstacleSpread;
+import view.Controller;
+import view.Debugger;
 import view.GameBoard;
 import view.GameFrame;
 import view.Tile;
@@ -19,13 +24,15 @@ import view.Tile;
 
 public class Main
 {
-    public static GameState state;
+    public static GameState state = GameState.PLACEOBSTACLE;;
     public static GameFrame frame;
     public static GameBoard board;
+    public static Controller control;
     public static ArrayList<Tile> tileset;
     public static model.gameHelper.Dimension dimension;
-    public static char pionCounter = 3;
-    public static int rootID = -1;
+    public static char pionCounter;
+    public static int rootID;
+    public static Debugger debugger;
 
 
     public static void main(String[] args)
@@ -51,24 +58,44 @@ public class Main
                         // handle exception
                     }
 
+                    debugger = new Debugger();
+                    debugger.setVisible(true);
+
                     Main.dimension  = new model.gameHelper.Dimension();
+                    state = GameState.PLACEOBSTACLE;
 
                     frame = new view.GameFrame();
                     Main.frame.setVisible(Boolean.TRUE);
+                    Main.frame.setSize(800, 600);
 
-
+                    control = new Controller();
+                    frame.getContentPane().add(control, BorderLayout.EAST);
 
                     board = new GameBoard(25);
-                    initGame(board);
+                    //initGame(board);
 
-                    frame.getContentPane().add(board, BorderLayout.CENTER);
+                    //frame.getContentPane().add(board, BorderLayout.CENTER);
+                    ((JScrollPane)((BorderLayout)frame.getContentPane().getLayout()).getLayoutComponent(BorderLayout.CENTER)).setViewportView(board);
                     frame.pack();
+                    state = GameState.PLACEOBSTACLE;
+
+
                 }
                 });
-        new Thread(() -> {
+
+       new Thread(() -> {
+
             while (true)
             {
-                System.out.printf("%3d %3d\r", (int) Main.pionCounter, Main.rootID);
+                //System.out.printf("%3d %3d\r", (int) Main.pionCounter, Main.rootID);
+                //System.out.printf("%20s\r", state.toString());
+
+                try
+                {
+                    debugger.textArea1.setText(Main.getLinkage());
+                } catch (NullPointerException ignore)
+                {
+                }
                 try
                 {
                     Thread.sleep(50);
@@ -80,11 +107,17 @@ public class Main
         }).start();
     }
 
-    public static void initGame(GameBoard board)
+    public static void initGame(GameBoard board, ArrayList<ArrayList<BlockType>> tmp )
     {
-        Maze maze = new Maze();
-        maze.generateWorld(5, 5);
-        ArrayList<ArrayList<BlockType>> tmp = maze.getWorld();
+        try
+        {
+            Main.tileset.clear();
+        } catch (NullPointerException ignore)
+        {
+        }
+
+        board.removeAll();
+
 
         Main.dimension.setX(tmp.get(0).size());
         Main.dimension.setY(tmp.size());
@@ -94,19 +127,52 @@ public class Main
 
         Main.tileset = new ArrayList<>(Main.dimension.getX() * Main.dimension.getY());
 
+
         for (int i = 0; i < tmp.size(); ++i)
         {
             for (int j = 0; j < tmp.get(i).size(); ++j)
             {
-                Main.tileset.add((i * tmp.size()) + j, new Tile(tmp.get(i).get(j), board, (i * tmp.size()) + j));
-                board.add(Main.tileset.get((i * tmp.size()) + j), (i * tmp.size()) + j);
-                Main.tileset.get((i * tmp.size()) + j).setLocation(j * board.getTileSize(), i * board.getTileSize());
-
+                Main.tileset.add((i * tmp.get(i).size()) + j, new Tile(tmp.get(i).get(j), board, (i * tmp.get(i).size()) + j));
+                board.add(Main.tileset.get((i * tmp.get(i).size()) + j), (i * tmp.get(i).size()) + j);
+                Main.tileset.get((i * tmp.get(i).size()) + j).setLocation(j * board.getTileSize(), i * board.getTileSize());
             }
         }
 
+
+
         tmp.clear();
         tmp = null;
-        maze = null;
+        generateLinkage();
+        board.repaint();
+        Main.pionCounter = 3;
+        Main.rootID = -1;
+
+        ((JScrollPane)((BorderLayout)Main.frame.getContentPane().getLayout()).getLayoutComponent(BorderLayout.CENTER)).repaint();
+        ((JScrollPane)((BorderLayout)Main.frame.getContentPane().getLayout()).getLayoutComponent(BorderLayout.CENTER)).revalidate();
+    }
+
+    private static void generateLinkage()
+    {
+        for(int i = 0; i < Main.tileset.size(); ++i)
+        {
+            Main.tileset.get(i).generateLinkage();
+        }
+    }
+
+    public  static String getLinkage()
+    {
+        String a = "";
+        for(int i = 0; i < Main.tileset.size(); ++i)
+        {
+            if(i % Main.dimension.getX() == 0)
+            {
+                a += String.format("\n%d ", Main.tileset.get(i).getLinkageSize());
+            }
+            else
+            {
+                a += String.format(" %d ", Main.tileset.get(i).getLinkageSize());
+            }
+        }
+        return a;
     }
 }

@@ -4,11 +4,14 @@
 
 package view;
 
+import com.sun.istack.internal.Nullable;
 import controller.Main;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.ListIterator;
 import javax.swing.JPanel;
 import model.world.type.BlockPion;
 import model.world.type.BlockType;
@@ -16,16 +19,19 @@ import model.world.type.BlockType;
 /**
  * @author Muhammad Syafiq Syafiq
  */
-public class Tile extends JPanel
+public class Tile extends JPanel implements Comparable
 {
     private model.world.type.BlockPion pion;
     private model.world.type.BlockType type;
     private model.world.type.BlockState state;
     private int id;
+    private LinkedList<Tile> linkage;
+
 
     public Tile(GameBoard parent, int id)
     {
         initComponents();
+        this.linkage = new LinkedList<>();
         this.id = id;
         this.type = null;
         this.pion = null;
@@ -35,9 +41,15 @@ public class Tile extends JPanel
         this.setBackground(model.world.color.BlockType.getColor(null));
     }
 
+    public int getLinkageSize()
+    {
+        return this.linkage.size();
+    }
+
     public Tile(model.world.type.BlockType type, GameBoard parent, int id)
     {
         initComponents();
+        this.linkage = new LinkedList<>();
         this.id = id;
         this.type = type;
         this.pion = null;
@@ -76,10 +88,35 @@ public class Tile extends JPanel
 
     private void thisMouseClicked(MouseEvent e)
     {
-        System.out.println(whoIsLeft(Main.dimension, this.id));
-        System.out.println(whoIsRight(Main.dimension, this.id));
-/*        switch (Main.state)
+        //System.out.printf("%2d %2d %2d %2d %2d\r", this.id, whoIsTop(Main.dimension, this.id), whoIsRight(Main.dimension, this.id), whoIsBottom(Main.dimension, this.id), whoIsLeft(Main.dimension, this.id));
+        switch (Main.state)
         {
+            case PLACEOBSTACLE:
+            {
+                if (e.getButton() == MouseEvent.BUTTON1)
+                {
+                    if(this.type == BlockType.PLAIN)
+                    {
+                    }
+                    else
+                    {
+                        this.type = BlockType.PLAIN;
+                    }
+                }
+                else if (e.getButton() == MouseEvent.BUTTON3)
+                {
+                    if (this.pion != null)
+                    {
+                    }
+                    else if (this.type == BlockType.PLAIN)
+                    {
+                        this.type = BlockType.WALL;
+                    }
+                }
+                this.setColor();
+                this.generateLinkage();
+                break;
+            }
             case PLACEPION:
             {
                 if (e.getButton() == MouseEvent.BUTTON1)
@@ -101,7 +138,7 @@ public class Tile extends JPanel
                         }
                     }
                 }
-                else
+                else if (e.getButton() == MouseEvent.BUTTON3)
                 {
                     if (this.pion == BlockPion.START)
                     {
@@ -117,6 +154,14 @@ public class Tile extends JPanel
                         Main.pionCounter += 2;
                     }
                 }
+                if(Main.pionCounter == 0)
+                {
+                    Main.control.enableStart();
+                }
+                else
+                {
+                    Main.control.disableStart();
+                }
                 break;
             }
             case PROGRESS:
@@ -127,31 +172,27 @@ public class Tile extends JPanel
             {
                 break;
             }
-        }*/
+        }
     }
 
     public static int whoIsLeft(model.gameHelper.Dimension dimension, int nodeID)
     {
-        if(nodeID % dimension.getX() == 0)
-        {
-            return -1;
-        }
-        else
-        {
-            return nodeID - 1;
-        }
+        return nodeID % dimension.getX() == 0 ? -1 : nodeID - 1;
     }
 
     public static int whoIsRight(model.gameHelper.Dimension dimension, int nodeID)
     {
-        if((nodeID + 1) % dimension.getX() == 0 )
-        {
-            return -1;
-        }
-        else
-        {
-            return nodeID + 1;
-        }
+        return (nodeID + 1) % dimension.getX() == 0  ? -1 : nodeID + 1;
+    }
+
+    public static int whoIsTop(model.gameHelper.Dimension dimension, int nodeID)
+    {
+        return nodeID - dimension.getX() < 0 ? -1 : nodeID - dimension.getX();
+    }
+
+    public static int whoIsBottom(model.gameHelper.Dimension dimension, int nodeID)
+    {
+        return nodeID + dimension.getX() + 1 > dimension.getX() * dimension.getY() ?  -1 : nodeID + dimension.getX();
     }
 
     private void initComponents()
@@ -184,6 +225,148 @@ public class Tile extends JPanel
 
         setPreferredSize(new Dimension(30, 30));
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
+    }
+
+    public void generateLinkage()
+    {
+        Tile tmp;
+        if(this.type == BlockType.WALL)
+        {
+            this.linkage.clear();
+            try
+            {
+                tmp = Main.tileset.get(Tile.whoIsTop(Main.dimension, this.id));
+                if(tmp.type == BlockType.PLAIN)
+                {
+                    tmp.removeToLingkage(this);
+                }
+            }
+            catch (IndexOutOfBoundsException | NullPointerException ignored)
+            {
+            }
+
+            try
+            {
+                tmp = Main.tileset.get(Tile.whoIsRight(Main.dimension, this.id));
+                if(tmp.type == BlockType.PLAIN)
+                {
+                    tmp.removeToLingkage(this);
+                }
+            }
+            catch (IndexOutOfBoundsException | NullPointerException ignored)
+            {
+            }
+
+            try
+            {
+                tmp = Main.tileset.get(Tile.whoIsBottom(Main.dimension, this.id));
+                if(tmp.type == BlockType.PLAIN)
+                {
+                    tmp.removeToLingkage(this);
+                }
+            }
+            catch (IndexOutOfBoundsException | NullPointerException ignored)
+            {
+            }
+
+            try
+            {
+                tmp = Main.tileset.get(Tile.whoIsLeft(Main.dimension, this.id));
+                if(tmp.type == BlockType.PLAIN)
+                {
+                    tmp.removeToLingkage(this);
+                }
+            }
+            catch (IndexOutOfBoundsException | NullPointerException ignored)
+            {
+            }
+        }
+        else
+        {
+
+            try
+            {
+                tmp = Main.tileset.get(Tile.whoIsTop(Main.dimension, this.id));
+                if(tmp.type == BlockType.PLAIN)
+                {
+                    this.addToLinkage(tmp);
+                    tmp.addToLinkage(this);
+                }
+            }
+            catch (IndexOutOfBoundsException | NullPointerException ignored)
+            {
+            }
+
+            try
+            {
+                tmp = Main.tileset.get(Tile.whoIsRight(Main.dimension, this.id));
+                if(tmp.type == BlockType.PLAIN)
+                {
+                    this.addToLinkage(tmp);
+                    tmp.addToLinkage(this);
+                }
+            }
+            catch (IndexOutOfBoundsException | NullPointerException ignored)
+            {
+            }
+
+            try
+            {
+                tmp = Main.tileset.get(Tile.whoIsBottom(Main.dimension, this.id));
+                if(tmp.type == BlockType.PLAIN)
+                {
+                    this.addToLinkage(tmp);
+                    tmp.addToLinkage(this);
+                }
+            }
+            catch (IndexOutOfBoundsException | NullPointerException ignored)
+            {
+            }
+
+            try
+            {
+                tmp = Main.tileset.get(Tile.whoIsLeft(Main.dimension, this.id));
+                if(tmp.type == BlockType.PLAIN)
+                {
+                    this.addToLinkage(tmp);
+                    tmp.addToLinkage(this);
+                }
+            }
+            catch (IndexOutOfBoundsException | NullPointerException ignored)
+            {
+            }
+        }
+    }
+
+    private void removeToLingkage(Tile tile)
+    {
+        for(int i = 0; i < this.linkage.size(); ++i)
+        {
+            if(this.linkage.get(i).compareTo(tile) == 1)
+            {
+                this.linkage.remove(i);
+                return;
+            }
+        }
+    }
+
+    private void addToLinkage(Tile tmp)
+    {
+        ListIterator<Tile> it = this.linkage.listIterator();
+        while(it.hasNext())
+        {
+            if(it.next().compareTo(tmp) == 1)
+            {
+                return;
+            }
+        }
+        this.linkage.addLast(tmp);
+    }
+
+
+    @Override public int compareTo(Object o)
+    {
+        return ((Tile)o).id == id ? 1 : 0;
     }
 
 

@@ -5,6 +5,7 @@ package model.gameHelper;
  */
 public enum GameState
 {
+    PLACEOBSTACLE,
     PLACEPION,
     PROGRESS,
     FINISH

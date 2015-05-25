@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="darcula" level="project" />
+    <orderEntry type="library" name="org.swinglabs.swingx:swingx-all:1.6.5-1" level="project" />
   </component>
 </module>

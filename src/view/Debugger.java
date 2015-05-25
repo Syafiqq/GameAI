@@ -1,39 +1,39 @@
 /*
- * Created by JFormDesigner on Sat May 23 11:49:09 ICT 2015
+ * Created by JFormDesigner on Mon May 25 23:41:00 WIB 2015
  */
 
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
+import java.awt.*;
 import javax.swing.*;
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
 
 /**
  * @author Muhammad Syafiq Syafiq
  */
-public class GameFrame extends JFrame
-{
-    public GameFrame()
-    {
+public class Debugger extends JFrame {
+    public Debugger() {
         initComponents();
     }
 
-    private void initComponents()
-    {
+    private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Evaluation license - Muhammad Syafiq Syafiq
-        scrollGame = new JScrollPane();
+        scrollPane1 = new JScrollPane();
+        textArea1 = new JTextArea();
 
         //======== this ========
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
-        setMinimumSize(new Dimension(800, 600));
+        setMinimumSize(new Dimension(600, 600));
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout(10, 10));
-        contentPane.add(scrollGame, BorderLayout.CENTER);
+
+        //======== scrollPane1 ========
+        {
+
+            //---- textArea1 ----
+            textArea1.setFont(new Font("Inconsolata", Font.PLAIN, 12));
+            scrollPane1.setViewportView(textArea1);
+        }
+        contentPane.add(scrollPane1, BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
@@ -41,6 +41,7 @@ public class GameFrame extends JFrame
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - Muhammad Syafiq Syafiq
-    private JScrollPane scrollGame;
+    public JScrollPane scrollPane1;
+    public JTextArea textArea1;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }
